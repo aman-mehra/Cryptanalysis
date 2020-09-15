@@ -100,17 +100,6 @@ public:
 
 };
 
-// int load_plaintexts(){
-//     ifstream file("input.txt");
-//     string line;
-//     while (getline(file, line)) {
-//          line.erase(std::find_if(line.rbegin(), line.rend(), [](int ch) {
-//                 return !std::isspace(ch);
-//             }).base(), line.end());
-//         plaintext_truth.push_back(line);
-//     }
-//     return 0;
-// }
 
 int read_ciphers(){
     ifstream file("cipher.txt");
@@ -122,6 +111,35 @@ int read_ciphers(){
         ciphertexts.push_back(line);
     }
     return 0;
+}
+
+string decrypt(map<string,string> inv_lookupTable){
+
+    ofstream outfile("output.txt");
+
+    for(int ind=0;ind<ciphertexts.size(); ind++){
+        string c = ciphertexts[ind];
+        string plainText="";
+        int len=stoi(c.substr(c.length()-2))+2;
+        string cipher=c.substr(0,c.length()-len);
+        for(int i=0;i<cipher.length()-1;i+=2){
+            plainText+=inv_lookupTable[cipher.substr(i,2)];
+        }
+
+        string encrypt_hash = c.substr(c.length()-len,len-2);
+        string decrypt_hash = to_string(hash<string>{}(plainText));
+
+        if (encrypt_hash != decrypt_hash){
+            cout << "Something Is Wrong. Hash Mismatch. " << "\n" << "Hash before Encryption = " << encrypt_hash << "\n" "Hash after Decryption = " << decrypt_hash << endl;
+            cout << "Decrypted " << plainText << endl;
+        }
+        else{
+            cout << plainText << endl;
+            outfile << plainText;
+            if(ind != ciphertexts.size())
+                outfile << "\n";
+        }
+    }
 }
 
 int main()
@@ -149,7 +167,9 @@ int main()
         cout << "Matched key " << ind+1 << endl;
         auto cor_key = bf.all_inv_keys[ind];
         for(int ord=0;ord<9;ord++)
-            cout<<reference[ord]<<"->"<<cor_key[reference[ord]]<<"\n";               
+            cout<<reference[ord]<<"->"<<cor_key[reference[ord]]<<"\n";
+        cout << "\nDecrypted plaintext\n"<< endl;   
+        decrypt(bf.all_keys[ind]);
     }
     return 0;   
 }

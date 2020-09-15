@@ -101,11 +101,11 @@ int main(){
 
     precal();
     for(auto x:lookupTable){
-        cout<<x.first<<" "<<x.second<<"\n";
+        cout<<x.first<<"->"<<x.second<<"\n";
     }
     cout<<"\ninverse\n";
     for(auto x:inv_lookupTable){
-        cout<<x.first<<" "<<x.second<<"\n";
+        cout<<x.first<<"->"<<x.second<<"\n";
     }
 
     cout << endl;
